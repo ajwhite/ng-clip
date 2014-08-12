@@ -41,12 +41,23 @@
         restrict: 'A',
         link: function (scope, element, attrs) {
           // Create the client object
-          var client = new ZeroClipboard(element);
+          var client,
+              tooltip,
+              tooltipCoppiedText = 'Copied!',
+              tooltipClass = 'field-copy-tooltip';
+
+          client = new ZeroClipboard(element);
+
           if (attrs.clipCopy === "") {
             scope.clipCopy = function(scope) {
               return element[0].previousElementSibling.innerText;
             };
           }
+
+          if (element.next() && element.next().hasClass(tooltipClass)) {
+            tooltip = element.next();
+          }
+
           client.on( 'ready', function(readyEvent) {
 
             client.on('copy', function (event) {
@@ -58,6 +69,7 @@
               if (angular.isDefined(attrs.clipClick)) {
                 scope.$apply(scope.clipClick);
               }
+              tooltip.text(tooltipCoppiedText);
             });
 
             scope.$on('$destroy', function() {
